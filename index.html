@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <title>非球面计算器</title>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col justify-center items-center">
+    <div class="bg-white p-8 rounded shadow-md w-full max-w-2xl">
+        <h1 class="text-2xl font-bold mb-6">非球面计算器</h1>
+        <form>
+            <!-- 直径输入框 -->
+            <div class="mb-4">
+                <label for="diameter" class="block text-sm font-medium text-gray-700">直径 (mm):</label>
+                <input type="number" id="diameter" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <!-- 高度输入框 -->
+            <div class="mb-4">
+                <label for="height" class="block text-sm font-medium text-gray-700">高度 (mm):</label>
+                <input type="number" id="height" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <!-- 请选择订单性质 -->
+            <p class="text-base font-medium text-gray-700 mb-2">请选择订单性质</p>
+            <div class="flex flex-wrap space-x-4 mb-6">
+                <div>
+                    <input type="radio" id="orderNatureSelf" name="orderNature" value="self" class="mr-2" checked>
+                    <label for="orderNatureSelf">自产</label>
+                </div>
+                <div>
+                    <input type="radio" id="orderNatureOutsourcing" name="orderNature" value="outsourcing" class="mr-2">
+                    <label for="orderNatureOutsourcing">外协</label>
+                </div>
+            </div>
+            <div id="diameterTip" class="text-red-500 hidden">100以下口径请选择外协</div>
+            <!-- 材料选择 -->
+            <p class="text-base font-medium text-gray-700 mb-2">请选择材料</p>
+            <div class="flex flex-wrap space-x-4 mb-6">
+                <div>
+                    <input type="radio" id="optionA" name="material" value="1,0,0,0" class="mr-2">
+                    <label for="optionA">A.小原微晶</label>
+                </div>
+                <div>
+                    <input type="radio" id="optionB" name="material" value="0,1,0,0" class="mr-2">
+                    <label for="optionB">B.肖特微晶</label>
+                </div>
+                <div>
+                    <input type="radio" id="optionC" name="material" value="0,0,1,0" class="mr-2">
+                    <label for="optionC">C.JGS1</label>
+                </div>
+                <div>
+                    <input type="radio" id="optionD" name="material" value="0,0,0,1" class="mr-2">
+                    <label for="optionD">D.JGS2</label>
+                </div>
+            </div>
+            <!-- rms选择 -->
+            <p class="text-base font-medium text-gray-700 mb-2">请选择rms</p>
+            <div class="flex flex-wrap space-x-4 mb-6">
+                <div>
+                    <input type="radio" id="rmsA" name="rms" value="1/50" class="mr-2">
+                    <label for="rmsA">A. 1/50</label>
+                </div>
+                <div>
+                    <input type="radio" id="rmsB" name="rms" value="1/60" class="mr-2">
+                    <label for="rmsB">B. 1/60</label>
+                </div>
+            </div>
+            <!-- 光洁度选择 -->
+            <p class="text-base font-medium text-gray-700 mb-2">请选择光洁度</p>
+            <div class="flex flex-wrap space-x-4 mb-6">
+                <div>
+                    <input type="radio" id="finishA" name="finish" value="II级" class="mr-2">
+                    <label for="finishA">A. II级</label>
+                </div>
+                <div>
+                    <input type="radio" id="finishB" name="finish" value="III级" class="mr-2">
+                    <label for="finishB">B. III级</label>
+                </div>
+                <div>
+                    <input type="radio" id="finishC" name="finish" value="V级" class="mr-2">
+                    <label for="finishC">C. IV级</label>
+                </div>
+            </div>
+            <!-- 非球面度选择 -->
+            <p class="text-base font-medium text-gray-700 mb-2">请选择非球面度</p>
+            <div class="flex flex-wrap space-x-4 mb-6">
+                <div>
+                    <input type="radio" id="nsphericityA" name="nsphericity" value="0" class="mr-2">
+                    <label for="nsphericityA">A. 0-20 um</label>
+                </div>
+                <div>
+                    <input type="radio" id="nsphericityB" name="nsphericity" value="20" class="mr-2">
+                    <label for="nsphericityB">B. 21-300 um</label>
+                </div>
+                <div>
+                    <input type="radio" id="nsphericityC" name="nsphericity" value="300" class="mr-2">
+                    <label for="nsphericityC">C. 301-1000 um</label>
+                </div>
+                <div>
+                    <input type="radio" id="nsphericityD" name="nsphericity" value="10000" class="mr-2">
+                    <label for="nsphericityD">D. 1000 um以上</label>
+                </div>
+            </div>
+            <!-- PV选择 -->
+            <p class="text-base font-medium text-gray-700 mb-2">请选择PV值</p>
+            <div class="flex flex-wrap space-x-4 mb-6">
+                <div>
+                    <input type="radio" id="pvA" name="pv" value="lessThan1/8" class="mr-2">
+                    <label for="pvA">A. 小于1/8</label>
+                </div>
+                <div>
+                    <input type="radio" id="pvB" name="pv" value="greaterThan1/8" class="mr-2">
+                    <label for="pvB">B. 大于1/8</label>
+                </div>
+            </div>
+            <!-- 请选择客户验收方式 -->
+            <p class="text-base font-medium text-gray-700 mb-2">请选择客户验收方式</p>
+            <div class="flex flex-wrap space-x-4 mb-6">
+                <div>
+                    <input type="radio" id="acceptanceA" name="acceptance" value="report" class="mr-2">
+                    <label for="acceptanceA">A. 提供检测报告</label>
+                </div>
+                <div>
+                    <input type="radio" id="acceptanceB" name="acceptance" value="on-site" class="mr-2">
+                    <label for="acceptanceB">B. 客户现场验收</label>
+                </div>
+            </div>
+            <!-- 请选择检测方式 -->
+            <p class="text-base font-medium text-gray-700 mb-2">请选择检测方式</p>
+            <div class="flex flex-wrap space-x-4 mb-6">
+                <div>
+                    <input type="radio" id="detectionA" name="detection" value="standard" class="mr-2">
+                    <label for="detectionA">A. 干涉仪/luphoscan/三坐标</label>
+                </div>
+                <div>
+                    <input type="radio" id="detectionB" name="detection" value="custom-cgh" class="mr-2">
+                    <label for="detectionB">B. 需要定制CGH</label>
+                </div>
+            </div>
+            <!-- 请选择检测 -->
+            <p class="text-base font-medium text-gray-700 mb-2">请选择检测</p>
+            <div class="flex flex-wrap space-x-4 mb-6">
+                <div>
+                    <input type="radio" id="testA" name="test" value="single-mirror" class="mr-2">
+                    <label for="testA">A. 单镜面型</label>
+                </div>
+                <div>
+                    <input type="radio" id="testB" name="test" value="system-mirror" class="mr-2">
+                    <label for="testB">B. 系统面型</label>
+                </div>
+            </div>
+            <!-- 是否需要镀膜选择 -->
+            <p class="text-base font-medium text-gray-700 mb-2">是否需要镀膜</p>
+            <div class="flex flex-wrap space-x-4 mb-6">
+                <div>
+                    <input type="radio" id="coatingYes" name="coating" value="yes" class="mr-2">
+                    <label for="coatingYes">是</label>
+                </div>
+                <div>
+                    <input type="radio" id="coatingNo" name="coating" value="no" class="mr-2" checked>
+                    <label for="coatingNo">否</label>
+                </div>
+            </div>
+            <!-- 镀膜类型选择 -->
+            <div id="coatingOptions" class="hidden">
+                <p class="text-base font-medium text-gray-700 mb-2">请选择镀膜类型</p>
+                <div class="flex flex-wrap space-x-4 mb-6">
+                    <div>
+                        <input type="radio" id="coatingA" name="coatingType" value="gold" class="mr-2">
+                        <label for="coatingA">A.镀金</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="coatingB" name="coatingType" value="silver" class="mr-2">
+                        <label for="coatingB">B.镀银</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="coatingC" name="coatingType" value="aluminum" class="mr-2">
+                        <label for="coatingC">C.镀铝</label>
+                    </div>
+                </div>
+            </div>
+            <button type="button" id="submitButton" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">提交</button>
+        </form>
+        <div id="result" class="mt-4 text-lg font-bold"></div>
+    </div>
+    <script>
+        const submitButton = document.getElementById('submitButton');
+        const resultDiv = document.getElementById('result');
+        const coatingYes = document.getElementById('coatingYes');
+        const coatingOptions = document.getElementById('coatingOptions');
+        const diameterInput = document.getElementById('diameter');
+        const diameterTip = document.getElementById('diameterTip');
+
+        coatingYes.addEventListener('change', function () {
+            if (this.checked) {
+                coatingOptions.classList.remove('hidden');
+            } else {
+                coatingOptions.classList.add('hidden');
+            }
+        });
+
+        diameterInput.addEventListener('input', function() {
+            const diameter = parseFloat(this.value);
+            if (!isNaN(diameter) && diameter < 100) {
+                diameterTip.classList.remove('hidden');
+            } else {
+                diameterTip.classList.add('hidden');
+            }
+        });
+
+        submitButton.addEventListener('click', function () {
+            const diameter = parseFloat(document.getElementById('diameter').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const materialOption = document.querySelector('input[name="material"]:checked');
+            const rmsOption = document.querySelector('input[name="rms"]:checked');
+            const finishOption = document.querySelector('input[name="finish"]:checked');
+            const nsphericityOption = document.querySelector('input[name="nsphericity"]:checked');
+            const pvOption = document.querySelector('input[name="pv"]:checked');
+            const acceptanceOption = document.querySelector('input[name="acceptance"]:checked');
+            const detectionOption = document.querySelector('input[name="detection"]:checked');
+            const testOption = document.querySelector('input[name="test"]:checked');
+            const coatingOption = document.querySelector('input[name="coating"]:checked');
+            const coatingTypeOption = document.querySelector('input[name="coatingType"]:checked');
+            const orderNatureOption = document.querySelector('input[name="orderNature"]:checked');
+
+            if (isNaN(diameter) || isNaN(height) ||!materialOption ||!rmsOption ||!finishOption ||!nsphericityOption ||!pvOption ||!acceptanceOption ||!detectionOption ||!testOption ||!orderNatureOption) {
+                resultDiv.textContent = '请输入有效的数据。';
+                return;
+            }
+
+            const materialStr = materialOption.value;
+            const material = materialStr.split(',').map(Number);
+            const rmsValue = rmsOption.value === '1/60'? 1 / 60 : 1 / 50;
+
+            let bValue;
+            if (finishOption.value === 'II级') {
+                bValue = 2;
+            } else if (finishOption.value === 'III级') {
+                bValue = 3;
+            } else {
+                bValue = 4;
+            }
+
+            let aValue;
+            if (nsphericityOption.value === '0') {
+                aValue = 1;
+            } else if (nsphericityOption.value === '20') {
+                aValue = 2;
+            } else if (nsphericityOption.value === '300') {
+                aValue = 3;
+            } else {
+                aValue = 4;
+            }
+
+            const m_d = [2.55, 2.55, 2.21, 2.21];
+            const m_p = [2600, 3900, 1400, 500];
+            const m_time = [10, 10, 7, 7];
+
+            let material_time = dotProduct(m_time, material);
+            const material_density = dotProduct(m_d, material);
+            const radius = diameter / 2;
+            const volume = Math.PI * Math.pow(radius + 20, 2) * (height + 2.5) * 0.000001;
+            const weight = volume * material_density;
+            const m_price = dotProduct(m_p, material);
+            const material_price = weight * m_price;
+
+            let ptime;
+            if (diameter <= 100) {
+                ptime = 17;
+            } else if (diameter <= 200) {
+                ptime = 17;
+            } else if (diameter <= 300) {
+                ptime = 17;
+            } else if (diameter <= 400) {
+                ptime = 22;
+            } else if (diameter <= 500) {
+                ptime = 32;
+            } else if (diameter <= 600) {
+                ptime = 42;
+            } else if (diameter <= 700) {
+                ptime = 52;
+            } else if (diameter <= 999) {
+                ptime = 72;
+            } else if (diameter > 1000) {
+                ptime = 92;
+            } else {
+                ptime = 0;
+            }
+
+            const rtime = rmsValue === 1 / 60? 0.1 : 0;
+
+            let btime;
+            if (bValue === 3) {
+                btime = 0.1;
+            } else if (bValue === 2) {
+                btime = 0.3;
+            } else {
+                btime = 0;
+            }
+
+            let atime;
+            if (aValue === 2) {
+                atime = 0.1;
+            } else if (aValue === 3) {
+                atime = 0.21;
+            } else if (aValue === 4) {
+                atime = 0.331;
+            } else {
+                atime = 0;
+            }
+
+            let pvtime = 0;
+            if (pvOption.value === 'greaterThan1/8') {
+                pvtime = 2;
+            }
+
+            let testtime1 = 0;
+            if (acceptanceOption.value === 'on-site') {
+                testtime1 = 2;
+            }
+
+            let testtime2 = 0;
+            if (detectionOption.value!== 'custom-cgh') {
+                testtime2 = 0;
+            }
+
+            let testtime3 = 0;
+            if (testOption.value === 'system-mirror') {
+                testtime3 = 7;
+            }
+
+            let testtime = testtime1 + testtime2 + testtime3;
+            let delitime = 5;
+
+            let omcost = 0;
+            let omtime = 0;
+            let ttime = ptime * (1 + rtime + btime + atime) + pvtime; 
+
+            if (orderNatureOption.value === 'outsourcing') {
+                if (diameter <= 50) {
+                    omcost = 3000;
+                    omtime = 16;
+                    ttime = 0;
+                } else if (diameter < 100) {
+                    omcost = 5000;
+                    omtime = 16;
+                    ttime = 0;
+                }
+                material_time = 7; 
+                delitime = 2;
+            }
+
+            let allprotime = material_time + ttime + omtime + testtime;
+            let ftime = allprotime + delitime;
+            let fixedcost = 90 * allprotime;
+            let hcost = 390 * (ttime + testtime);
+            let cost = material_price + fixedcost + hcost + omcost;
+
+            if (coatingOption.value === 'yes' && coatingTypeOption) {
+                const coatingType = coatingTypeOption.value;
+                if (coatingType === 'gold') {
+                    if (diameter < 400) {
+                        cost += 15000;
+                    } else {
+                        cost += 30000;
+                    }
+                } else if (coatingType === 'silver') {
+                    if (diameter < 400) {
+                        cost += 5000;
+                    } else {
+                        cost += 10000;
+                    }
+                } else if (coatingType === 'aluminum') {
+                    if (diameter < 400) {
+                        cost += 3000;
+                    } else {
+                        cost += 6000;
+                    }
+                }
+                if (diameter < 400) {
+                    ftime += 5;
+                } else {
+                    ftime += 7;
+                }
+            }
+
+            cost *= 1.18;
+            price = cost * 1.25
+
+            let resultHtml = `
+                体积: ${volume.toFixed(2)} 立方米<br>
+                重量: ${weight.toFixed(2)} kg<br>
+                材料采购时间: ${material_time} 天<br>
+                材料价格: ${material_price.toFixed(1)} 元<br>
+                总交期：${ftime.toFixed(1)} 天<br>
+                总成本：${cost.toFixed(1)} 元<br>
+                建议报价：${price.toFixed(1)} 元
+            `;
+
+            if (detectionOption.value === 'custom-cgh') {
+                resultHtml += '<br><span class="text-red-500">如需我们定制CGH，预估成本增加3 - 4万，具体找采购询价</span>';
+            }
+
+            resultDiv.innerHTML = resultHtml;
+        });
+
+        function dotProduct(a, b) {
+            let result = 0;
+            for (let i = 0; i < a.length; i++) {
+                result += a[i] * b[i];
+            }
+            return result;
+        }
+    </script>
+</body>
+</html>
+    
