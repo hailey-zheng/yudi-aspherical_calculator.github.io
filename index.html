@@ -54,6 +54,18 @@
                     <label for="optionD">D.JGS2</label>
                 </div>
             </div>
+            <!-- PV选择 -->
+            <p class="text-base font-medium text-gray-700 mb-2">请选择PV值</p>
+            <div class="flex flex-wrap space-x-4 mb-6">
+                <div>
+                    <input type="radio" id="pvA" name="pv" value="lessThan1/8" class="mr-2">
+                    <label for="pvA">A. 小于1/8</label>
+                </div>
+                <div>
+                    <input type="radio" id="pvB" name="pv" value="greaterThan1/8" class="mr-2">
+                    <label for="pvB">B. 大于1/8</label>
+                </div>
+            </div>
             <!-- rms选择 -->
             <p class="text-base font-medium text-gray-700 mb-2">请选择rms</p>
             <div class="flex flex-wrap space-x-4 mb-6">
@@ -62,24 +74,8 @@
                     <label for="rmsA">A. 1/50</label>
                 </div>
                 <div>
-                    <input type="radio" id="rmsB" name="rms" value="1/60" class="mr-2">
-                    <label for="rmsB">B. 1/60</label>
-                </div>
-            </div>
-            <!-- 光洁度选择 -->
-            <p class="text-base font-medium text-gray-700 mb-2">请选择光洁度</p>
-            <div class="flex flex-wrap space-x-4 mb-6">
-                <div>
-                    <input type="radio" id="finishA" name="finish" value="II级" class="mr-2">
-                    <label for="finishA">A. II级</label>
-                </div>
-                <div>
-                    <input type="radio" id="finishB" name="finish" value="III级" class="mr-2">
-                    <label for="finishB">B. III级</label>
-                </div>
-                <div>
-                    <input type="radio" id="finishC" name="finish" value="V级" class="mr-2">
-                    <label for="finishC">C. IV级</label>
+                    <input type="radio" id="rmsB" name="rms" value="1/100" class="mr-2">
+                    <label for="rmsB">B. 1/100</label>
                 </div>
             </div>
             <!-- 非球面度选择 -->
@@ -102,16 +98,20 @@
                     <label for="nsphericityD">D. 1000 um以上</label>
                 </div>
             </div>
-            <!-- PV选择 -->
-            <p class="text-base font-medium text-gray-700 mb-2">请选择PV值</p>
+            <!-- 光洁度选择 -->
+            <p class="text-base font-medium text-gray-700 mb-2">请选择光洁度</p>
             <div class="flex flex-wrap space-x-4 mb-6">
                 <div>
-                    <input type="radio" id="pvA" name="pv" value="lessThan1/8" class="mr-2">
-                    <label for="pvA">A. 小于1/8</label>
+                    <input type="radio" id="finishA" name="finish" value="II级" class="mr-2">
+                    <label for="finishA">A. II级</label>
                 </div>
                 <div>
-                    <input type="radio" id="pvB" name="pv" value="greaterThan1/8" class="mr-2">
-                    <label for="pvB">B. 大于1/8</label>
+                    <input type="radio" id="finishB" name="finish" value="III级" class="mr-2">
+                    <label for="finishB">B. III级</label>
+                </div>
+                <div>
+                    <input type="radio" id="finishC" name="finish" value="V级" class="mr-2">
+                    <label for="finishC">C. IV级</label>
                 </div>
             </div>
             <!-- 请选择客户验收方式 -->
@@ -231,7 +231,7 @@
 
             const materialStr = materialOption.value;
             const material = materialStr.split(',').map(Number);
-            const rmsValue = rmsOption.value === '1/60'? 1 / 60 : 1 / 50;
+            const rmsValue = rmsOption.value === '1/100'? 1 / 100 : 1 / 50;
 
             let bValue;
             if (finishOption.value === 'II级') {
@@ -266,29 +266,39 @@
             const material_price = weight * m_price;
 
             let ptime;
+            let mintime;
+            let n;
             if (diameter <= 100) {
-                ptime = 17;
+	        ptime = 17;
             } else if (diameter <= 200) {
                 ptime = 17;
             } else if (diameter <= 300) {
                 ptime = 17;
             } else if (diameter <= 400) {
-                ptime = 22;
+                mintime = 17;
+		n = diameter - 300
+                ptime = mintime + 5 *(n/100);
             } else if (diameter <= 500) {
-                ptime = 32;
+                mintime = 22;
+		n = diameter - 400
+                ptime = mintime + 10 *(n/100);
             } else if (diameter <= 600) {
-                ptime = 42;
+                mintime = 32;
+		n = diameter - 500
+                ptime = mintime + 10 *(n/100);
             } else if (diameter <= 700) {
-                ptime = 52;
+                mintime = 42;
+		n = diameter - 600
+                ptime = mintime + 10 *(n/100);
             } else if (diameter <= 999) {
-                ptime = 72;
-            } else if (diameter > 1000) {
+                mintime = 52;
+		n = diameter - 700
+                ptime = mintime + 20 *(n/299);
+            } else if (diameter >= 1000) {
                 ptime = 92;
             } else {
                 ptime = 0;
             }
-
-            const rtime = rmsValue === 1 / 60? 0.1 : 0;
 
             let btime;
             if (bValue === 3) {
@@ -301,18 +311,21 @@
 
             let atime;
             if (aValue === 2) {
-                atime = 0.1;
+                atime = 0.05;
             } else if (aValue === 3) {
-                atime = 0.21;
+                atime = 0.10;
             } else if (aValue === 4) {
-                atime = 0.331;
+                atime = 0.15;
             } else {
                 atime = 0;
             }
 
-            let pvtime = 0;
-            if (pvOption.value === 'greaterThan1/8') {
-                pvtime = 2;
+            const pvValue = pvOption.value;
+            const pvtime = pvValue === 'greaterThan1/8'? 0.1 : 0;
+
+            let rtime = 0;
+            if (rmsOption.value === '1/100') {
+                rtime = 2;
             }
 
             let testtime1 = 0;
@@ -321,8 +334,8 @@
             }
 
             let testtime2 = 0;
-            if (detectionOption.value!== 'custom-cgh') {
-                testtime2 = 0;
+            if (detectionOption.value!== 'standard') {
+                testtime2 = 2;
             }
 
             let testtime3 = 0;
@@ -335,7 +348,7 @@
 
             let omcost = 0;
             let omtime = 0;
-            let ttime = ptime * (1 + rtime + btime + atime) + pvtime; 
+            let ttime = ptime * (1 + atime + pvtime + btime) + rtime; 
 
             if (orderNatureOption.value === 'outsourcing') {
                 if (diameter <= 50) {
@@ -386,7 +399,7 @@
             }
 
             cost *= 1.18;
-            price = cost * 1.25
+            const price = cost * 1.25;
 
             let resultHtml = `
                 体积: ${volume.toFixed(2)} 立方米<br>
@@ -415,4 +428,3 @@
     </script>
 </body>
 </html>
-    
