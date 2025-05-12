@@ -33,7 +33,7 @@
                     <label for="orderNatureOutsourcing">外协</label>
                 </div>
             </div>
-            <div id="diameterTip" class="text-red-500 hidden">100以下口径请选择外协</div>
+            <div id="diameterTip" class="text-red-500 hidden">100以下口径请选择外协，如果需要2级光洁度以采购询价为准</div>
             <!-- 材料选择 -->
             <p class="text-base font-medium text-gray-700 mb-2">请选择材料</p>
             <div class="flex flex-wrap space-x-4 mb-6">
@@ -256,6 +256,7 @@
             const m_d = [2.55, 2.55, 2.21, 2.21];
             const m_p = [2600, 3900, 1400, 500];
             const m_time = [10, 10, 7, 7];
+            const msmall_time = [7, 7, 5, 5];
 
             let material_time = dotProduct(m_time, material);
             const material_density = dotProduct(m_d, material);
@@ -353,14 +354,14 @@
             if (orderNatureOption.value === 'outsourcing') {
                 if (diameter <= 50) {
                     omcost = 3000;
-                    omtime = 16;
+                    omtime = 14;
                     ttime = 0;
                 } else if (diameter < 100) {
-                    omcost = 5000;
+                    omcost = 3000+(2000/49)*(diameter -50) ;
                     omtime = 16;
                     ttime = 0;
                 }
-                material_time = 7; 
+                material_time = dotProduct(msmall_time, material);; 
                 delitime = 2;
             }
 
