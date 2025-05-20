@@ -514,7 +514,7 @@
             let price = (material_price) + (( hcost + omcost) * quantity * quantitydis + fixedcost * quantitydis) * contant;
             price = Math.ceil(price * 1.18); 
             let pcsprice = price / quantity;
-            let lowpr = pcsprice * 0.8;
+            let lowpr = pcsprice * 0.9;
             let highpr = pcsprice * 1.3;
             let lowto = lowpr * quantity;
             let highto = highpr * quantity;
