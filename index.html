@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -209,6 +208,7 @@
         </form>
         <div id="result" class="mt-4 text-lg font-bold"></div>
     </div>
+
     <script>
         const submitButton = document.getElementById('submitButton');
         const resultDiv = document.getElementById('result');
@@ -407,10 +407,10 @@
 
             /////////// time ///////////////
             const time2 = 7 * (quantity - 1);
-            let allprotime = material_time + ttime + omtime + testtime;
-            let ftime = (allprotime + delitime);
-            const qtime = ftime + time2;
-
+            let allprotime = ttime + omtime + testtime + 3;
+            let ftime = ( material_time + allprotime + delitime);
+            const qtime = ftime + time2;  //总交期
+ 
             let contant = 1;
             let x;
             let min;
@@ -427,21 +427,22 @@
             } else if (diameter <= 400) {
                 min = 3;
                 x = diameter - 300;
-                contant = min + 1 * (x / 100);
+                contant = min + 1.5 * (x / 100);
             } else if (diameter <= 500) {
-                min = 4;
+                min = 4.5;
                 x = diameter - 400;
                 contant = min + 1 * (x / 100);
             } else if (diameter <= 600) {
-                min = 5;
+                min = 5.5;
                 x = diameter - 500;
-                contant = min + 1 * (x / 100);
+                contant = min + 1.5 * (x / 100);
             } else {
                 contant = 1;
             }
 
             let coating = 0;
             let y;
+	    let ctime = 0;
             if (coatingOption.value === 'yes' && coatingTypeOption) {
                 const coatingType = coatingTypeOption.value;
                 if (coatingType === 'gold') {
@@ -488,9 +489,9 @@
                     }
                 }
                 if (diameter < 400) {
-                    ftime += 5;
+                    ctime += 5;
                 } else {
-                    ftime += 7;
+                    ctime += 7;
                 }
             }
 
@@ -499,21 +500,20 @@
                 quantitydis = 1;
             } else if (quantity <= 10) {
                 quantitydis = 0.85;
-            } else if (diameter <= 50) {
+            } else if (quantity <= 50) {
                 quantitydis = 0.7;
             } else {
-                quantitydis = 1; 
+                quantitydis = 0; 
             }
 
-            let fixedcost = 90 * (allprotime + time2);
-            let hcost = (390 * (ttime + testtime + time2));
-            let cost = (material_price)  + (hcost + omcost) * quantity * quantitydis + fixedcost * quantitydis;
-            cost = Math.ceil(cost * 1.18); 
-            let pcscost = cost / quantity;
+            let fixedcost = 90 * (ftime);
+            let hcost = 390 * (allprotime);
+            let cost = mmprice + hcost + + omcost + fixedcost ;
+            let tcost = cost * quantity;
 
-            let price = (material_price) + (( hcost + omcost) * quantity * quantitydis + fixedcost * quantitydis) * contant;
-            price = Math.ceil(price * 1.18); 
-            let pcsprice = price / quantity;
+            let pcsprice = mmprice + ((hcost + + omcost + fixedcost ) * contant * quantitydis) ; 
+            pcsprice = Math.ceil(pcsprice * 1.18); 
+
             let lowpr = pcsprice * 0.9;
             let highpr = pcsprice * 1.3;
             let lowto = lowpr * quantity;
